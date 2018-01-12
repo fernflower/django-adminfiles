@@ -26,13 +26,12 @@ long_description = (open('README.rst').read() +
 
 setup(
     name='django-adminfiles',
-    version='1.0.1.post%s' % hgrev,
+    version='1.0.2.post%s' % hgrev,
     description='File upload manager and picker for Django admin',
     author='Carl Meyer',
     author_email='carl@oddbird.net',
     long_description=long_description,
-    url='http://bitbucket.org/carljm/django-adminfiles/',
-    packages=['adminfiles', 'adminfiles.templatetags', \
+    packages=['adminfiles', 'adminfiles.templatetags',
               'adminfiles.management', 'adminfiles.management.commands'],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -50,5 +49,6 @@ setup(
                                  'templates/adminfiles/render/*.html',
                                  'templates/adminfiles/render/image/*.html',
                                  'templates/adminfiles/uploader/*.html',
-                                 'locale/*/LC_MESSAGES/*']}
+                                 'locale/*/LC_MESSAGES/*',
+                                 'migrations/*']}
 )

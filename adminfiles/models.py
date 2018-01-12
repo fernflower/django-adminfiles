@@ -1,4 +1,3 @@
-import os
 import mimetypes
 
 from django.conf import settings as django_settings
@@ -8,7 +7,7 @@ from django.core.files.images import get_image_dimensions
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 
 from adminfiles import settings
 
@@ -17,9 +16,11 @@ if 'tagging' in django_settings.INSTALLED_APPS:
 else:
     TagField = None
 
+
 class FileUpload(models.Model):
     upload_date = models.DateTimeField(_('upload date'), auto_now_add=True)
-    upload = models.FileField(_('file'), upload_to=settings.ADMINFILES_UPLOAD_TO)
+    upload = models.FileField(_('file'),
+                              upload_to=settings.ADMINFILES_UPLOAD_TO)
     title = models.CharField(_('title'), max_length=100)
     slug = models.SlugField(_('slug'), max_length=100, unique=True)
     description = models.CharField(_('description'), blank=True, max_length=200)
@@ -28,7 +29,7 @@ class FileUpload(models.Model):
 
     if TagField:
         tags = TagField(_('tags'))
-    
+
     class Meta:
         ordering = ['upload_date', 'title']
         verbose_name = _('file upload')
@@ -56,13 +57,13 @@ class FileUpload(models.Model):
             else:
                 self._dimensions_cache = (None, None)
         return self._dimensions_cache
-    
+
     def width(self):
         return self._get_dimensions()[0]
-    
+
     def height(self):
         return self._get_dimensions()[1]
-    
+
     def save(self, *args, **kwargs):
         try:
             uri = self.upload.path
@@ -84,7 +85,7 @@ class FileUpload(models.Model):
                 break
         for link in links:
             ref = self.slug
-            opts = ':'.join(['%s=%s' % (k,v) for k,v in link[1].items()])
+            opts = ':'.join(['%s=%s' % (k, v) for k, v in link[1].items()])
             if opts:
                 ref += ':' + opts
             yield {'desc': link[0],
@@ -97,7 +98,6 @@ class FileUpload(models.Model):
                 % (settings.ADMINFILES_STDICON_SET, self.mime_type()))
 
 
-
 class FileUploadReference(models.Model):
     """
     Tracks which ``FileUpload``s are referenced by which content models.
@@ -106,7 +106,7 @@ class FileUploadReference(models.Model):
     upload = models.ForeignKey(FileUpload)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = fields.GenericForeignKey('content_type', 'object_id')
 
     class Meta:
         unique_together = ('upload', 'content_type', 'object_id')
